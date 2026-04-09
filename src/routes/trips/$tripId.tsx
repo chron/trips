@@ -53,12 +53,13 @@ function TripDetail() {
   const [mapFlyTo, setMapFlyTo] = useState<{ lat: number; lng: number } | null>(null);
 
   // Dynamic page title
+  const tripTitle = trip?.title;
   useEffect(() => {
-    if (trip) {
-      document.title = `${trip.title} — Trips`;
+    if (tripTitle) {
+      document.title = `${tripTitle} — Trips`;
       return () => { document.title = "Trips"; };
     }
-  }, [trip?.title]);
+  }, [tripTitle]);
 
   function setActiveTab(tab: Tab) {
     updatePresence({ viewingTab: tab });

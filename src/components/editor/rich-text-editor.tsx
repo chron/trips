@@ -46,7 +46,7 @@ export function RichTextEditor({
   const [markdownText, setMarkdownText] = useState("");
   const [hovering, setHovering] = useState(false);
   const onUpdateRef = useRef(onUpdate);
-  onUpdateRef.current = onUpdate;
+  useEffect(() => { onUpdateRef.current = onUpdate; });
   const lastSetContent = useRef("");
   const localUpdateRef = useRef(false);
 

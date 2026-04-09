@@ -10,9 +10,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const getOrCreate = useMutation(api.workspaces.getOrCreate);
   const [workspaceId, setWorkspaceId] = useState<Id<"workspaces"> | null>(null);
 
+  // Sync query result into state — getOrCreate needs the mutation + setState pattern
   useEffect(() => {
     if (existingWorkspaceId) {
-      setWorkspaceId(existingWorkspaceId);
+      setWorkspaceId(existingWorkspaceId); // eslint-disable-line react-hooks/set-state-in-effect
     } else if (existingWorkspaceId === null) {
       // No workspace yet, create one
       getOrCreate().then(setWorkspaceId);

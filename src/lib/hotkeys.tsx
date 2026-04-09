@@ -33,7 +33,10 @@ export function useMetaHeld() {
 export function useHotkey(id: string, key: string, label: string, handler: () => void) {
   const { register, unregister } = useContext(HotkeyContext);
   const handlerRef = useRef(handler);
-  handlerRef.current = handler;
+
+  useEffect(() => {
+    handlerRef.current = handler;
+  });
 
   useEffect(() => {
     register(id, { key, label, handler: () => handlerRef.current() });

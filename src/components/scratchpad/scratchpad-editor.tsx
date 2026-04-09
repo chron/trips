@@ -13,9 +13,15 @@ export function ScratchpadEditor({
   className?: string;
 }) {
   const workspaceId = useWorkspaceId();
-  const scratchpad = tripId
-    ? useQuery(api.scratchpads.getForTrip, { tripId })
-    : useQuery(api.scratchpads.getGlobal, { workspaceId });
+  const tripScratchpad = useQuery(
+    api.scratchpads.getForTrip,
+    tripId ? { tripId } : "skip",
+  );
+  const globalScratchpad = useQuery(
+    api.scratchpads.getGlobal,
+    tripId ? "skip" : { workspaceId },
+  );
+  const scratchpad = tripId ? tripScratchpad : globalScratchpad;
   const save = useMutation(api.scratchpads.save);
   const saveTimeout = useRef<ReturnType<typeof setTimeout>>(null);
   const lastSaved = useRef("");
