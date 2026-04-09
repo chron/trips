@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation } from "convex/react";
 import { useUpdateMyPresence } from "@liveblocks/react";
+import { toast } from "sonner";
 import { api } from "../../../convex/_generated/api";
 import type { Id, Doc } from "../../../convex/_generated/dataModel";
 import { TripMap } from "../../components/trip-detail/trip-map";
@@ -11,7 +12,12 @@ import { TripRoom, CursorTracker } from "../../components/presence/trip-room";
 import { PresenceAvatars } from "../../components/presence/presence-avatars";
 import { CursorOverlay } from "../../components/presence/cursor-overlay";
 import { UrlIngest } from "../../components/ingestion/url-ingest";
-import { MoodboardEditor } from "../../components/moodboard/moodboard-editor";
+
+const LazyMoodboardEditor = lazy(() =>
+  import("../../components/moodboard/moodboard-editor").then((m) => ({
+    default: m.MoodboardEditor,
+  })),
+);
 
 const tabs = ["map", "pins", "notes", "board"] as const;
 type Tab = (typeof tabs)[number];
@@ -46,6 +52,14 @@ function TripDetail() {
   const updatePresence = useUpdateMyPresence();
   const [mapFlyTo, setMapFlyTo] = useState<{ lat: number; lng: number } | null>(null);
 
+  // Dynamic page title
+  useEffect(() => {
+    if (trip) {
+      document.title = `${trip.title} — Trips`;
+      return () => { document.title = "Trips"; };
+    }
+  }, [trip?.title]);
+
   function setActiveTab(tab: Tab) {
     updatePresence({ viewingTab: tab });
     navigate({
@@ -71,12 +85,6 @@ function TripDetail() {
       </div>
     );
   }
-
-  // Dynamic page title
-  useEffect(() => {
-    document.title = `${trip.title} — Trips`;
-    return () => { document.title = "Trips"; };
-  }, [trip.title]);
 
   return (
     <CursorTracker>
@@ -104,6 +112,7 @@ function TripDetail() {
               onClick={async () => {
                 if (confirm("Delete this trip?")) {
                   await removeTrip({ id: trip._id });
+                  toast.success(`"${trip.title}" deleted`);
                   navigate({ to: "/trips" });
                 }
               }}
@@ -146,7 +155,15 @@ function TripDetail() {
             </div>
           )}
           {activeTab === "board" && (
-            <MoodboardEditor tripId={trip._id} />
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center">
+                  <p className="text-muted-foreground text-sm">Loading board…</p>
+                </div>
+              }
+            >
+              <LazyMoodboardEditor tripId={trip._id} />
+            </Suspense>
           )}
         </div>
       </div>

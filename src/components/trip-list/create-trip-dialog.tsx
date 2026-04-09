@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useMutation } from "convex/react";
+import { toast } from "sonner";
 import { api } from "../../../convex/_generated/api";
 import { useWorkspaceId } from "../../lib/workspace";
 
@@ -14,6 +15,7 @@ export function CreateTripDialog({ onClose }: { onClose: () => void }) {
     if (!title.trim() || !destination.trim()) return;
 
     await createTrip({ title: title.trim(), destination: destination.trim(), workspaceId });
+    toast.success(`"${title.trim()}" created`);
     onClose();
   }
 

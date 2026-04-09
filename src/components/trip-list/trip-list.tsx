@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useQuery, useMutation } from "convex/react";
 import {
   DndContext,
@@ -16,6 +16,7 @@ import {
 } from "@dnd-kit/sortable";
 import { api } from "../../../convex/_generated/api";
 import { useWorkspaceId } from "../../lib/workspace";
+import { useHotkey, HotkeyHint } from "../../lib/hotkeys";
 import { TripCard } from "./trip-card";
 import { CreateTripDialog } from "./create-trip-dialog";
 
@@ -24,6 +25,9 @@ export function TripList() {
   const trips = useQuery(api.trips.list, { workspaceId });
   const reorder = useMutation(api.trips.reorder);
   const [showCreate, setShowCreate] = useState(false);
+
+  const openCreate = useCallback(() => setShowCreate(true), []);
+  useHotkey("new-trip", "n", "New trip", openCreate);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -86,12 +90,15 @@ export function TripList() {
         )}
       </div>
 
-      <button
-        onClick={() => setShowCreate(true)}
-        className="mt-3 w-full rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer"
-      >
-        + New trip
-      </button>
+      <div className="relative mt-3">
+        <HotkeyHint hotkey="n" />
+        <button
+          onClick={openCreate}
+          className="w-full rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer"
+        >
+          + New trip
+        </button>
+      </div>
 
       {showCreate && <CreateTripDialog onClose={() => setShowCreate(false)} />}
     </>

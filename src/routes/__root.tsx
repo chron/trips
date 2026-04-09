@@ -8,7 +8,9 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
 import { WorkspaceProvider } from "../lib/workspace";
 import { LiveblocksWrapper } from "../lib/liveblocks";
+import { Toaster } from "sonner";
 import { ErrorBoundary } from "../components/error-boundary";
+import { HotkeyProvider } from "../lib/hotkeys";
 import { TripList } from "../components/trip-list/trip-list";
 import { ScratchpadEditor } from "../components/scratchpad/scratchpad-editor";
 
@@ -28,9 +30,22 @@ function RootLayout() {
       <Authenticated>
         <WorkspaceProvider>
           <LiveblocksWrapper>
-            <ErrorBoundary>
-              <AppShell />
-            </ErrorBoundary>
+            <HotkeyProvider>
+              <ErrorBoundary>
+                <AppShell />
+              </ErrorBoundary>
+              <Toaster
+                position="bottom-right"
+                toastOptions={{
+                  style: {
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-border)",
+                    color: "var(--color-foreground)",
+                    fontSize: "13px",
+                  },
+                }}
+              />
+            </HotkeyProvider>
           </LiveblocksWrapper>
         </WorkspaceProvider>
       </Authenticated>

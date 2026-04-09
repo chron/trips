@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAction, useMutation } from "convex/react";
+import { toast } from "sonner";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 
@@ -82,6 +83,7 @@ export function UrlIngest({
     });
 
     const coords = { lat: editedResult.lat, lng: editedResult.lng };
+    toast.success(`Pin "${editedResult.name}" added`);
     setUrl("");
     setEditedResult(null);
     setError(null);
