@@ -9,6 +9,8 @@
         "@dnd-kit/core": "^6.3.1",
         "@dnd-kit/sortable": "^10.0.0",
         "@dnd-kit/utilities": "^3.2.2",
+        "@liveblocks/client": "^3.18.0",
+        "@liveblocks/react": "^3.18.0",
         "@mapbox/mapbox-gl-geocoder": "^5.1.2",
         "@tailwindcss/vite": "^4.2.2",
         "@tanstack/react-router": "^1.168.10",
@@ -263,6 +265,12 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
+
+    "@liveblocks/client": ["@liveblocks/client@3.18.0", "", { "dependencies": { "@liveblocks/core": "3.18.0" } }, "sha512-pr9Os4P/Rc9tB4/7rEaVk64CVKF16S3+i/OjklxCvVV37DwTyslyyLEtQiyaT54CiNJDKVi4s6VywPTpp/yCOg=="],
+
+    "@liveblocks/core": ["@liveblocks/core@3.18.0", "", { "peerDependencies": { "@types/json-schema": "^7" } }, "sha512-PXpcxvmc1+AOcp7v7qZD+eboIBjrZNySYKAxFJ8CJd9ElWQtK8fRKjzmlbU6ejbotem2X0qvxw5sltDkvEO4+Q=="],
+
+    "@liveblocks/react": ["@liveblocks/react@3.18.0", "", { "dependencies": { "@liveblocks/client": "3.18.0", "@liveblocks/core": "3.18.0" }, "peerDependencies": { "@types/react": "*", "@types/react-dom": "*", "react": "^18 || ^19 || ^19.0.0-rc" }, "optionalPeers": ["@types/react", "@types/react-dom"] }, "sha512-/b2E2nQatyEWsMVBEkYD5HczASDU9vwCM/gO9IECge6WfWQ9QHbgjdEAnTHcsGq/azDaMDjwyEoS0lMKjk2hPA=="],
 
     "@mapbox/fusspot": ["@mapbox/fusspot@0.4.0", "", { "dependencies": { "is-plain-obj": "^1.1.0", "xtend": "^4.0.1" } }, "sha512-6sys1vUlhNCqMvJOqPEPSi0jc9tg7aJ//oG1A16H3PXoIt9whtNngD7UzBHUVTH15zunR/vRvMtGNVsogm1KzA=="],
 

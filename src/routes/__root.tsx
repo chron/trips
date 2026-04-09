@@ -7,6 +7,7 @@ import { useState } from "react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
 import { WorkspaceProvider } from "../lib/workspace";
+import { LiveblocksWrapper } from "../lib/liveblocks";
 import { TripList } from "../components/trip-list/trip-list";
 import { ScratchpadEditor } from "../components/scratchpad/scratchpad-editor";
 
@@ -25,7 +26,9 @@ function RootLayout() {
       </Unauthenticated>
       <Authenticated>
         <WorkspaceProvider>
-          <AppShell />
+          <LiveblocksWrapper>
+            <AppShell />
+          </LiveblocksWrapper>
         </WorkspaceProvider>
       </Authenticated>
     </>

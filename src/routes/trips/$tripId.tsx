@@ -1,22 +1,35 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation } from "convex/react";
+import { useUpdateMyPresence } from "@liveblocks/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id, Doc } from "../../../convex/_generated/dataModel";
 import { TripMap } from "../../components/trip-detail/trip-map";
 import { PinList } from "../../components/trip-detail/pin-list";
 import { ScratchpadEditor } from "../../components/scratchpad/scratchpad-editor";
+import { TripRoom, CursorTracker } from "../../components/presence/trip-room";
+import { PresenceAvatars } from "../../components/presence/presence-avatars";
+import { CursorOverlay } from "../../components/presence/cursor-overlay";
 
 const tabs = ["map", "pins", "notes"] as const;
 type Tab = (typeof tabs)[number];
 
 export const Route = createFileRoute("/trips/$tripId")({
-  component: TripDetail,
+  component: TripDetailWrapper,
   validateSearch: (search: Record<string, unknown>): { tab: Tab } => ({
     tab: tabs.includes(search.tab as Tab) ? (search.tab as Tab) : "map",
   }),
 });
 
 const statuses = ["draft", "planning", "booked"] as const;
+
+function TripDetailWrapper() {
+  const { tripId } = Route.useParams();
+  return (
+    <TripRoom tripId={tripId}>
+      <TripDetail />
+    </TripRoom>
+  );
+}
 
 function TripDetail() {
   const { tripId } = Route.useParams();
@@ -27,8 +40,10 @@ function TripDetail() {
   const updateStatus = useMutation(api.trips.updateStatus);
   const removeTrip = useMutation(api.trips.remove);
   const { tab: activeTab } = Route.useSearch();
+  const updatePresence = useUpdateMyPresence();
 
   function setActiveTab(tab: Tab) {
+    updatePresence({ viewingTab: tab });
     navigate({
       to: "/trips/$tripId",
       params: { tripId },
@@ -54,56 +69,60 @@ function TripDetail() {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
-        <div className="flex items-center gap-6">
-          <div>
-            <h2 className="text-xl font-serif text-foreground">{trip.title}</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {trip.destination}
-            </p>
+    <CursorTracker>
+      <CursorOverlay />
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
+          <div className="flex items-center gap-6">
+            <div>
+              <h2 className="text-xl font-serif text-foreground">{trip.title}</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {trip.destination}
+              </p>
+            </div>
+            <TabBar active={activeTab} onChange={setActiveTab} />
           </div>
-          <TabBar active={activeTab} onChange={setActiveTab} />
-        </div>
-        <div className="flex items-center gap-2">
-          <StatusPicker
-            status={trip.status}
-            onChange={(status) =>
-              updateStatus({ id: trip._id, status })
-            }
-          />
-          <button
-            onClick={async () => {
-              if (confirm("Delete this trip?")) {
-                await removeTrip({ id: trip._id });
-                navigate({ to: "/trips" });
+          <div className="flex items-center gap-3">
+            <PresenceAvatars />
+            <StatusPicker
+              status={trip.status}
+              onChange={(status) =>
+                updateStatus({ id: trip._id, status })
               }
-            }}
-            className="rounded-lg px-3 py-1.5 text-xs text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
-          >
-            Delete
-          </button>
+            />
+            <button
+              onClick={async () => {
+                if (confirm("Delete this trip?")) {
+                  await removeTrip({ id: trip._id });
+                  navigate({ to: "/trips" });
+                }
+              }}
+              className="rounded-lg px-3 py-1.5 text-xs text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+
+        <div className="flex-1 min-h-0">
+          {activeTab === "map" && <TripMap tripId={trip._id} />}
+          {activeTab === "pins" && (
+            <PinList
+              tripId={trip._id}
+              onSelectPin={() => setActiveTab("map")}
+            />
+          )}
+          {activeTab === "notes" && (
+            <div className="flex flex-col p-6 h-full">
+              <ScratchpadEditor
+                tripId={trip._id}
+                className="flex-1 flex flex-col [&_.tiptap]:flex-1"
+              />
+            </div>
+          )}
         </div>
       </div>
-
-      <div className="flex-1 min-h-0">
-        {activeTab === "map" && <TripMap tripId={trip._id} />}
-        {activeTab === "pins" && (
-          <PinList
-            tripId={trip._id}
-            onSelectPin={() => setActiveTab("map")}
-          />
-        )}
-        {activeTab === "notes" && (
-          <div className="flex flex-col p-6 h-full">
-            <ScratchpadEditor
-              tripId={trip._id}
-              className="flex-1 flex flex-col [&_.tiptap]:flex-1"
-            />
-          </div>
-        )}
-      </div>
-    </div>
+    </CursorTracker>
   );
 }
 
@@ -114,7 +133,7 @@ function TabBar({
   active: Tab;
   onChange: (tab: Tab) => void;
 }) {
-  const tabs: { id: Tab; label: string }[] = [
+  const tabItems: { id: Tab; label: string }[] = [
     { id: "map", label: "Map" },
     { id: "pins", label: "Pins" },
     { id: "notes", label: "Notes" },
@@ -122,7 +141,7 @@ function TabBar({
 
   return (
     <div className="flex gap-1 rounded-lg bg-muted p-0.5">
-      {tabs.map((tab) => (
+      {tabItems.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onChange(tab.id)}

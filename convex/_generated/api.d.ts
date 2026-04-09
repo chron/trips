@@ -8,6 +8,8 @@
  * @module
  */
 
+import type * as pins from "../pins.js";
+import type * as scratchpads from "../scratchpads.js";
 import type * as trips from "../trips.js";
 import type * as workspaces from "../workspaces.js";
 
@@ -18,6 +20,8 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  pins: typeof pins;
+  scratchpads: typeof scratchpads;
   trips: typeof trips;
   workspaces: typeof workspaces;
 }>;

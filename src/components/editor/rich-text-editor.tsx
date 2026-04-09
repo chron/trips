@@ -47,6 +47,8 @@ export function RichTextEditor({
   const [hovering, setHovering] = useState(false);
   const onUpdateRef = useRef(onUpdate);
   onUpdateRef.current = onUpdate;
+  const lastSetContent = useRef("");
+  const localUpdateRef = useRef(false);
 
   const editor = useEditor({
     extensions: [
@@ -59,16 +61,29 @@ export function RichTextEditor({
       },
     },
     onUpdate: ({ editor }) => {
+      localUpdateRef.current = true;
       onUpdateRef.current(editor.getHTML());
     },
   });
 
-  // Sync external content into editor
-  const lastSetContent = useRef("");
+  // Sync external content into editor, but skip if the user is actively editing
+  // to avoid resetting their cursor position
   useEffect(() => {
-    if (editor && content !== lastSetContent.current) {
+    if (!editor) return;
+    // If we just made a local edit, skip this remote update
+    if (localUpdateRef.current) {
+      localUpdateRef.current = false;
+      lastSetContent.current = content;
+      return;
+    }
+    if (content !== lastSetContent.current) {
       const currentHtml = editor.getHTML();
       if (currentHtml !== content) {
+        // Don't replace content while the user is focused — it resets cursor
+        if (editor.isFocused) {
+          lastSetContent.current = content;
+          return;
+        }
         lastSetContent.current = content;
         editor.commands.setContent(content, false);
       }
