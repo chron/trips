@@ -45,7 +45,21 @@ export function TripList() {
     reorder({ ids: reordered.map((t) => t._id) });
   }
 
-  if (!trips) return null;
+  if (!trips) {
+    return (
+      <div className="space-y-2">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="rounded-lg border border-border bg-card p-3 shadow-card animate-pulse"
+          >
+            <div className="h-4 w-24 bg-muted rounded" />
+            <div className="h-3 w-16 bg-muted rounded mt-1.5" />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <>

@@ -3,11 +3,12 @@ import {
   Unauthenticated,
   AuthLoading,
 } from "convex/react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
 import { WorkspaceProvider } from "../lib/workspace";
 import { LiveblocksWrapper } from "../lib/liveblocks";
+import { ErrorBoundary } from "../components/error-boundary";
 import { TripList } from "../components/trip-list/trip-list";
 import { ScratchpadEditor } from "../components/scratchpad/scratchpad-editor";
 
@@ -27,7 +28,9 @@ function RootLayout() {
       <Authenticated>
         <WorkspaceProvider>
           <LiveblocksWrapper>
-            <AppShell />
+            <ErrorBoundary>
+              <AppShell />
+            </ErrorBoundary>
           </LiveblocksWrapper>
         </WorkspaceProvider>
       </Authenticated>
@@ -70,17 +73,55 @@ function SignInScreen() {
 
 function AppShell() {
   const [scratchpadOpen, setScratchpadOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close sidebar on navigation (mobile)
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+
+  // Keyboard shortcut: Escape to close sidebar
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && sidebarOpen) {
+        setSidebarOpen(false);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [sidebarOpen]);
 
   return (
     <div className="flex h-screen">
-      <aside className="w-70 shrink-0 border-r border-border bg-muted flex flex-col">
+      {/* Mobile sidebar toggle */}
+      <button
+        onClick={() => setSidebarOpen(true)}
+        className="fixed top-4 left-4 z-40 rounded-lg bg-card border border-border p-2 shadow-card md:hidden cursor-pointer"
+        aria-label="Open sidebar"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M2 3.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z" />
+        </svg>
+      </button>
+
+      {/* Backdrop for mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/30 md:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-70 shrink-0 border-r border-border bg-muted flex flex-col transition-transform md:static md:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div className="p-6 border-b border-border flex items-center justify-between">
           <h1 className="text-2xl font-serif text-foreground tracking-tight">
             Trips
           </h1>
           <UserButton />
         </div>
-        <nav className="flex-1 p-4 overflow-y-auto">
+        <nav className="flex-1 p-4 overflow-y-auto" onClick={closeSidebar}>
           <TripList />
         </nav>
         <div className="border-t border-border">
@@ -107,7 +148,9 @@ function AppShell() {
         </div>
       </aside>
       <main className="flex-1 overflow-y-auto">
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation } from "convex/react";
 import { useUpdateMyPresence } from "@liveblocks/react";
@@ -71,6 +71,12 @@ function TripDetail() {
       </div>
     );
   }
+
+  // Dynamic page title
+  useEffect(() => {
+    document.title = `${trip.title} — Trips`;
+    return () => { document.title = "Trips"; };
+  }, [trip.title]);
 
   return (
     <CursorTracker>
