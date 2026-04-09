@@ -1,17 +1,22 @@
-import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id, Doc } from "../../../convex/_generated/dataModel";
 import { TripMap } from "../../components/trip-detail/trip-map";
 import { PinList } from "../../components/trip-detail/pin-list";
+import { ScratchpadEditor } from "../../components/scratchpad/scratchpad-editor";
+
+const tabs = ["map", "pins", "notes"] as const;
+type Tab = (typeof tabs)[number];
 
 export const Route = createFileRoute("/trips/$tripId")({
   component: TripDetail,
+  validateSearch: (search: Record<string, unknown>): { tab: Tab } => ({
+    tab: tabs.includes(search.tab as Tab) ? (search.tab as Tab) : "map",
+  }),
 });
 
 const statuses = ["draft", "planning", "booked"] as const;
-type Tab = "map" | "pins";
 
 function TripDetail() {
   const { tripId } = Route.useParams();
@@ -21,7 +26,16 @@ function TripDetail() {
   });
   const updateStatus = useMutation(api.trips.updateStatus);
   const removeTrip = useMutation(api.trips.remove);
-  const [activeTab, setActiveTab] = useState<Tab>("map");
+  const { tab: activeTab } = Route.useSearch();
+
+  function setActiveTab(tab: Tab) {
+    navigate({
+      to: "/trips/$tripId",
+      params: { tripId },
+      search: { tab },
+      replace: true,
+    });
+  }
 
   if (trip === undefined) {
     return (
@@ -80,6 +94,14 @@ function TripDetail() {
             onSelectPin={() => setActiveTab("map")}
           />
         )}
+        {activeTab === "notes" && (
+          <div className="flex flex-col p-6 h-full">
+            <ScratchpadEditor
+              tripId={trip._id}
+              className="flex-1 flex flex-col [&_.tiptap]:flex-1"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -95,6 +117,7 @@ function TabBar({
   const tabs: { id: Tab; label: string }[] = [
     { id: "map", label: "Map" },
     { id: "pins", label: "Pins" },
+    { id: "notes", label: "Notes" },
   ];
 
   return (

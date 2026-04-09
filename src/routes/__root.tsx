@@ -3,10 +3,12 @@ import {
   Unauthenticated,
   AuthLoading,
 } from "convex/react";
+import { useState } from "react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
 import { WorkspaceProvider } from "../lib/workspace";
 import { TripList } from "../components/trip-list/trip-list";
+import { ScratchpadEditor } from "../components/scratchpad/scratchpad-editor";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -57,6 +59,8 @@ function SignInScreen() {
 }
 
 function AppShell() {
+  const [scratchpadOpen, setScratchpadOpen] = useState(false);
+
   return (
     <div className="flex h-screen">
       <aside className="w-70 shrink-0 border-r border-border bg-muted flex flex-col">
@@ -69,6 +73,28 @@ function AppShell() {
         <nav className="flex-1 p-4 overflow-y-auto">
           <TripList />
         </nav>
+        <div className="border-t border-border">
+          <button
+            onClick={() => setScratchpadOpen(!scratchpadOpen)}
+            className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          >
+            <span>Scratchpad</span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className={`transition-transform ${scratchpadOpen ? "rotate-180" : ""}`}
+            >
+              <path d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z" />
+            </svg>
+          </button>
+          {scratchpadOpen && (
+            <div className="px-3 pb-3 max-h-60 overflow-y-auto">
+              <ScratchpadEditor />
+            </div>
+          )}
+        </div>
       </aside>
       <main className="flex-1 overflow-y-auto">
         <Outlet />
