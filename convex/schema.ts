@@ -41,6 +41,11 @@ export default defineSchema({
     .index("by_trip", ["tripId"])
     .index("by_workspace_global", ["workspaceId", "tripId"]),
 
+  moodboards: defineTable({
+    tripId: v.id("trips"),
+    snapshot: v.string(),
+  }).index("by_trip", ["tripId"]),
+
   workspaces: defineTable({
     name: v.string(),
   }),

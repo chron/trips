@@ -11,8 +11,9 @@ import { TripRoom, CursorTracker } from "../../components/presence/trip-room";
 import { PresenceAvatars } from "../../components/presence/presence-avatars";
 import { CursorOverlay } from "../../components/presence/cursor-overlay";
 import { UrlIngest } from "../../components/ingestion/url-ingest";
+import { MoodboardEditor } from "../../components/moodboard/moodboard-editor";
 
-const tabs = ["map", "pins", "notes"] as const;
+const tabs = ["map", "pins", "notes", "board"] as const;
 type Tab = (typeof tabs)[number];
 
 export const Route = createFileRoute("/trips/$tripId")({
@@ -138,6 +139,9 @@ function TripDetail() {
               />
             </div>
           )}
+          {activeTab === "board" && (
+            <MoodboardEditor tripId={trip._id} />
+          )}
         </div>
       </div>
     </CursorTracker>
@@ -155,6 +159,7 @@ function TabBar({
     { id: "map", label: "Map" },
     { id: "pins", label: "Pins" },
     { id: "notes", label: "Notes" },
+    { id: "board", label: "Board" },
   ];
 
   return (
