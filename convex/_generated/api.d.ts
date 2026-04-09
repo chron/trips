@@ -9,6 +9,7 @@
  */
 
 import type * as trips from "../trips.js";
+import type * as workspaces from "../workspaces.js";
 
 import type {
   ApiFromModules,
@@ -18,6 +19,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   trips: typeof trips;
+  workspaces: typeof workspaces;
 }>;
 
 /**

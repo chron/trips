@@ -5,6 +5,8 @@ import {
 } from "convex/react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
+import { WorkspaceProvider } from "../lib/workspace";
+import { TripList } from "../components/trip-list/trip-list";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -20,7 +22,9 @@ function RootLayout() {
         <SignInScreen />
       </Unauthenticated>
       <Authenticated>
-        <AppShell />
+        <WorkspaceProvider>
+          <AppShell />
+        </WorkspaceProvider>
       </Authenticated>
     </>
   );
@@ -63,7 +67,7 @@ function AppShell() {
           <UserButton />
         </div>
         <nav className="flex-1 p-4 overflow-y-auto">
-          <p className="text-sm text-muted-foreground">No trips yet</p>
+          <TripList />
         </nav>
       </aside>
       <main className="flex-1 overflow-y-auto">
