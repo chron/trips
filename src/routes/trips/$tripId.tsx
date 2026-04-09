@@ -1,21 +1,27 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id, Doc } from "../../../convex/_generated/dataModel";
+import { TripMap } from "../../components/trip-detail/trip-map";
+import { PinList } from "../../components/trip-detail/pin-list";
 
 export const Route = createFileRoute("/trips/$tripId")({
   component: TripDetail,
 });
 
 const statuses = ["draft", "planning", "booked"] as const;
+type Tab = "map" | "pins";
 
 function TripDetail() {
   const { tripId } = Route.useParams();
+  const navigate = useNavigate();
   const trip = useQuery(api.trips.get, {
     id: tripId as Id<"trips">,
   });
   const updateStatus = useMutation(api.trips.updateStatus);
   const removeTrip = useMutation(api.trips.remove);
+  const [activeTab, setActiveTab] = useState<Tab>("map");
 
   if (trip === undefined) {
     return (
@@ -34,13 +40,16 @@ function TripDetail() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-serif text-foreground">{trip.title}</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            {trip.destination}
-          </p>
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
+        <div className="flex items-center gap-6">
+          <div>
+            <h2 className="text-xl font-serif text-foreground">{trip.title}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {trip.destination}
+            </p>
+          </div>
+          <TabBar active={activeTab} onChange={setActiveTab} />
         </div>
         <div className="flex items-center gap-2">
           <StatusPicker
@@ -50,10 +59,10 @@ function TripDetail() {
             }
           />
           <button
-            onClick={() => {
+            onClick={async () => {
               if (confirm("Delete this trip?")) {
-                removeTrip({ id: trip._id });
-                window.history.back();
+                await removeTrip({ id: trip._id });
+                navigate({ to: "/trips" });
               }
             }}
             className="rounded-lg px-3 py-1.5 text-xs text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
@@ -63,11 +72,46 @@ function TripDetail() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-border bg-card p-8 shadow-card text-center">
-        <p className="text-muted-foreground text-sm">
-          Map and pins coming soon…
-        </p>
+      <div className="flex-1 min-h-0">
+        {activeTab === "map" && <TripMap tripId={trip._id} />}
+        {activeTab === "pins" && (
+          <PinList
+            tripId={trip._id}
+            onSelectPin={() => setActiveTab("map")}
+          />
+        )}
       </div>
+    </div>
+  );
+}
+
+function TabBar({
+  active,
+  onChange,
+}: {
+  active: Tab;
+  onChange: (tab: Tab) => void;
+}) {
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "map", label: "Map" },
+    { id: "pins", label: "Pins" },
+  ];
+
+  return (
+    <div className="flex gap-1 rounded-lg bg-muted p-0.5">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => onChange(tab.id)}
+          className={`rounded-md px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
+            active === tab.id
+              ? "bg-card text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {tab.label}
+        </button>
+      ))}
     </div>
   );
 }
