@@ -6,11 +6,15 @@ export const Route = createFileRoute("/trips/")({
 
 function TripsPage() {
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-serif text-foreground mb-4">Your Trips</h2>
-      <div className="rounded-lg border border-border bg-card p-8 shadow-card text-center">
+    <div className="flex h-full items-center justify-center">
+      <div className="text-center space-y-6 max-w-xs">
+        <img
+          src="/illustration.png"
+          alt=""
+          className="w-48 h-48 mx-auto rounded-2xl object-cover opacity-80"
+        />
         <p className="text-muted-foreground text-sm">
-          No trips yet. Create your first trip to get started.
+          Select a trip from the sidebar, or create a new one to get started.
         </p>
       </div>
     </div>
