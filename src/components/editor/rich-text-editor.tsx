@@ -85,7 +85,7 @@ export function RichTextEditor({
           return;
         }
         lastSetContent.current = content;
-        editor.commands.setContent(content, false);
+        editor.commands.setContent(content, { emitUpdate: false });
       }
     }
   }, [editor, content]);
@@ -102,7 +102,7 @@ export function RichTextEditor({
     const html = marked.parse(markdownText, { async: false }) as string;
     if (editor) {
       lastSetContent.current = html;
-      editor.commands.setContent(html, false);
+      editor.commands.setContent(html, { emitUpdate: false });
       onUpdateRef.current(html);
     }
     setMode("rich");

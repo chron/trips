@@ -13,6 +13,7 @@
     "deploy": "bun run build && wrangler pages deploy dist --project-name=trips"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.86.1",
     "@clerk/clerk-react": "^5.61.3",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",

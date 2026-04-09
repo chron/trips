@@ -22,7 +22,13 @@ const categoryColors: Record<string, string> = {
 
 type PendingPin = { lat: number; lng: number };
 
-export function TripMap({ tripId }: { tripId: Id<"trips"> }) {
+export function TripMap({
+  tripId,
+  initialFlyTo,
+}: {
+  tripId: Id<"trips">;
+  initialFlyTo?: { lat: number; lng: number } | null;
+}) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<Map<string, mapboxgl.Marker>>(new Map());
@@ -54,7 +60,7 @@ export function TripMap({ tripId }: { tripId: Id<"trips"> }) {
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
     map.addControl(
       new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
+        accessToken: mapboxgl.accessToken as string,
         mapboxgl,
         marker: false,
         placeholder: "Search for a place…",
@@ -69,6 +75,17 @@ export function TripMap({ tripId }: { tripId: Id<"trips"> }) {
       mapRef.current = null;
     };
   }, []);
+
+  // Fly to a location when requested (e.g. after URL ingest creates a pin)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !initialFlyTo) return;
+    map.flyTo({
+      center: [initialFlyTo.lng, initialFlyTo.lat],
+      zoom: 14,
+      duration: 1500,
+    });
+  }, [initialFlyTo]);
 
   // Handle map clicks — show pending pin
   const handleMapClick = useCallback(

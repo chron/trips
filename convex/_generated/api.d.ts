@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as ingestion from "../ingestion.js";
 import type * as pins from "../pins.js";
 import type * as scratchpads from "../scratchpads.js";
 import type * as trips from "../trips.js";
@@ -20,6 +21,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  ingestion: typeof ingestion;
   pins: typeof pins;
   scratchpads: typeof scratchpads;
   trips: typeof trips;

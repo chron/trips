@@ -49,6 +49,7 @@ export function TripCard({ trip }: { trip: Doc<"trips"> }) {
         <Link
           to="/trips/$tripId"
           params={{ tripId: trip._id }}
+          search={{ tab: "map" }}
           className="flex-1 min-w-0"
         >
           <p className="text-sm font-medium text-foreground truncate">

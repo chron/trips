@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation } from "convex/react";
 import { useUpdateMyPresence } from "@liveblocks/react";
@@ -9,6 +10,7 @@ import { ScratchpadEditor } from "../../components/scratchpad/scratchpad-editor"
 import { TripRoom, CursorTracker } from "../../components/presence/trip-room";
 import { PresenceAvatars } from "../../components/presence/presence-avatars";
 import { CursorOverlay } from "../../components/presence/cursor-overlay";
+import { UrlIngest } from "../../components/ingestion/url-ingest";
 
 const tabs = ["map", "pins", "notes"] as const;
 type Tab = (typeof tabs)[number];
@@ -41,6 +43,7 @@ function TripDetail() {
   const removeTrip = useMutation(api.trips.remove);
   const { tab: activeTab } = Route.useSearch();
   const updatePresence = useUpdateMyPresence();
+  const [mapFlyTo, setMapFlyTo] = useState<{ lat: number; lng: number } | null>(null);
 
   function setActiveTab(tab: Tab) {
     updatePresence({ viewingTab: tab });
@@ -105,12 +108,27 @@ function TripDetail() {
         </div>
 
         <div className="flex-1 min-h-0">
-          {activeTab === "map" && <TripMap tripId={trip._id} />}
+          {activeTab === "map" && (
+            <TripMap tripId={trip._id} initialFlyTo={mapFlyTo} />
+          )}
           {activeTab === "pins" && (
-            <PinList
-              tripId={trip._id}
-              onSelectPin={() => setActiveTab("map")}
-            />
+            <div className="flex flex-col h-full">
+              <div className="p-4 border-b border-border shrink-0">
+                <UrlIngest
+                  tripId={trip._id}
+                  onPinCreated={(coords) => {
+                    setMapFlyTo(coords);
+                    setActiveTab("map");
+                  }}
+                />
+              </div>
+              <div className="flex-1 min-h-0 overflow-y-auto">
+                <PinList
+                  tripId={trip._id}
+                  onSelectPin={() => setActiveTab("map")}
+                />
+              </div>
+            </div>
           )}
           {activeTab === "notes" && (
             <div className="flex flex-col p-6 h-full">
