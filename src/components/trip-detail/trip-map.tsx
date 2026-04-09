@@ -37,6 +37,8 @@ export function TripMap({
   const createPin = useMutation(api.pins.create);
   const [selectedPinId, setSelectedPinId] = useState<Id<"pins"> | null>(null);
   const [pendingPin, setPendingPin] = useState<PendingPin | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const hasFittedBounds = useRef(false);
 
   const selectedPin = pins?.find((p) => p._id === selectedPinId) ?? null;
 
@@ -69,6 +71,7 @@ export function TripMap({
       "top-left",
     );
     mapRef.current = map;
+    map.on("load", () => setMapLoaded(true));
 
     return () => {
       map.remove();
@@ -131,10 +134,10 @@ export function TripMap({
     };
   }, [handleMapClick]);
 
-  // Sync markers with pins
+  // Sync markers with pins — wait for map to be loaded
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !pins) return;
+    if (!map || !pins || !mapLoaded) return;
 
     const currentIds = new Set(pins.map((p) => p._id));
     const existing = markersRef.current;
@@ -170,7 +173,19 @@ export function TripMap({
         existing.set(pin._id, marker);
       }
     }
-  }, [pins]);
+
+    // Fit map to show all pins on first load
+    if (!hasFittedBounds.current && pins.length > 0) {
+      hasFittedBounds.current = true;
+      if (pins.length === 1) {
+        map.flyTo({ center: [pins[0].lng, pins[0].lat], zoom: 12, duration: 1000 });
+      } else {
+        const bounds = new mapboxgl.LngLatBounds();
+        for (const pin of pins) bounds.extend([pin.lng, pin.lat]);
+        map.fitBounds(bounds, { padding: 80, duration: 1000 });
+      }
+    }
+  }, [pins, mapLoaded]);
 
   async function handleConfirmPin(data: {
     name: string;
