@@ -4,7 +4,7 @@ import {
   AuthLoading,
 } from "convex/react";
 import { useState, useEffect, useCallback } from "react";
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { createRootRoute, Outlet, useMatch } from "@tanstack/react-router";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
 import { WorkspaceProvider } from "../lib/workspace";
 import { LiveblocksWrapper } from "../lib/liveblocks";
@@ -13,6 +13,9 @@ import { ErrorBoundary } from "../components/error-boundary";
 import { HotkeyProvider } from "../lib/hotkeys";
 import { TripList } from "../components/trip-list/trip-list";
 import { ScratchpadEditor } from "../components/scratchpad/scratchpad-editor";
+import { ChatSidebar } from "../components/chat/chat-sidebar";
+import { MessageCircle } from "lucide-react";
+import type { Id } from "../../convex/_generated/dataModel";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -89,6 +92,11 @@ function SignInScreen() {
 function AppShell() {
   const [scratchpadOpen, setScratchpadOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+
+  // Get active trip ID from route if on a trip page
+  const tripMatch = useMatch({ from: "/trips/$tripId", shouldThrow: false });
+  const activeTripId = tripMatch?.params?.tripId as Id<"trips"> | undefined;
 
   // Close sidebar on navigation (mobile)
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
@@ -167,6 +175,25 @@ function AppShell() {
           <Outlet />
         </ErrorBoundary>
       </main>
+
+      {/* Chat sidebar */}
+      <ChatSidebar
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+        tripId={activeTripId}
+      />
+
+      {/* Chat toggle button */}
+      {!chatOpen && (
+        <button
+          type="button"
+          onClick={() => setChatOpen(true)}
+          className="fixed bottom-6 right-6 z-50 rounded-full bg-primary p-3 text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors cursor-pointer"
+          title="Open AI assistant"
+        >
+          <MessageCircle className="h-5 w-5" />
+        </button>
+      )}
     </div>
   );
 }

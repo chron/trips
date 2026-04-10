@@ -8,6 +8,10 @@
  * @module
  */
 
+import type * as aiChat from "../aiChat.js";
+import type * as chat from "../chat.js";
+import type * as chatTools from "../chatTools.js";
+import type * as http from "../http.js";
 import type * as ingestion from "../ingestion.js";
 import type * as moodboardAssets from "../moodboardAssets.js";
 import type * as moodboards from "../moodboards.js";
@@ -23,6 +27,10 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  aiChat: typeof aiChat;
+  chat: typeof chat;
+  chatTools: typeof chatTools;
+  http: typeof http;
   ingestion: typeof ingestion;
   moodboardAssets: typeof moodboardAssets;
   moodboards: typeof moodboards;

@@ -10,6 +10,7 @@ Use bun for package management.
 - **Rich text:** Tiptap with markdown toggle
 - **Mood board:** tldraw v4 (lazy-loaded)
 - **AI ingestion:** Claude API via Convex action (uses Jina Reader for URL fetching)
+- **AI chat:** Vercel AI SDK v6 (`ai` + `@ai-sdk/anthropic` + `@ai-sdk/react`) via Convex HTTP endpoint
 - **Toasts:** Sonner
 - **Linting:** oxlint + ESLint (`bun run lint`)
 - **Deploy:** Cloudflare Pages

@@ -8,11 +8,11 @@
 
 ## Next Features
 
-- [ ] Switch AI calls to Vercel AI SDK for model flexibility
 - [ ] Invite partner by email (workspace sharing)
 - [ ] Collaborative text editing cursors via Liveblocks Yjs in scratchpad
 - [ ] Pin category icons/colours on map markers
 - [ ] Instagram Reel URL support in ingestion (extract from meta tags)
+- [ ] More AI agent tools: update/edit pins, delete trips, search web for recommendations
 
 ## Nice-to-Have (Post-MVP)
 

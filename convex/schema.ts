@@ -54,6 +54,28 @@ export default defineSchema({
     .index("by_trip", ["tripId"])
     .index("by_asset", ["tripId", "assetId"]),
 
+  chatThreads: defineTable({
+    workspaceId: v.id("workspaces"),
+    tripId: v.optional(v.id("trips")),
+    title: v.string(),
+  }).index("by_workspace", ["workspaceId"]),
+
+  chatMessages: defineTable({
+    threadId: v.id("chatThreads"),
+    role: v.union(v.literal("user"), v.literal("assistant")),
+    content: v.string(),
+    toolCalls: v.optional(
+      v.array(
+        v.object({
+          id: v.string(),
+          name: v.string(),
+          args: v.string(),
+          result: v.optional(v.string()),
+        }),
+      ),
+    ),
+  }).index("by_thread", ["threadId"]),
+
   workspaces: defineTable({
     name: v.string(),
   }),

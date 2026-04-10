@@ -111,6 +111,21 @@ The first shippable cut. Goal: two people can sign in, manage a list of trip ide
 - [x] Snapshot persistence to Convex (debounced save)
 - [x] "Board" tab on trip detail page
 - [x] Lazy-loaded to keep bundle lean
+- [x] Convex file storage for uploaded images (replaces base64-in-JSON)
+- [x] Save indicator (unsaved → spinner → check) in trip header
+
+### Bonus: AI Chat Sidebar ✓
+
+- [x] Collapsible right-hand panel with floating toggle button
+- [x] Multiple conversation threads with tab bar (create/delete/switch)
+- [x] Streaming responses via Vercel AI SDK v6 + Convex HTTP endpoints
+- [x] Agent tools: create trips, add/list/remove pins, read/write scratchpads, navigate to trips
+- [x] Tool call display (expandable, like Claude.ai) with input/output
+- [x] Markdown rendering in assistant messages (react-markdown + Tailwind typography)
+- [x] Auto-titling threads via Haiku after first exchange
+- [x] Client-side navigation when agent uses navigateToTrip tool
+- [x] Clerk JWT auth for HTTP streaming endpoint
+- [x] Message persistence to Convex (survives page reload)
 
 ---
 
@@ -135,26 +150,34 @@ The first shippable cut. Goal: two people can sign in, manage a list of trip ide
 ```
 src/
   routes/
-    __root.tsx          # layout shell
+    __root.tsx          # layout shell + chat sidebar integration
     index.tsx           # redirect to /trips
     trips/
       index.tsx         # trip list
       $tripId.tsx       # trip detail (map + scratchpad + pins)
   components/
+    chat/               # AI chat sidebar (sidebar, tabs, messages, input, tool display)
     trip-list/          # trip cards, create dialog, dnd
     trip-detail/        # map, pin panel, scratchpad
+    moodboard/          # tldraw canvas with Convex asset storage
     presence/           # cursor overlays, avatars
     ingestion/          # URL input, confirmation dialog
-    ui/                 # shadcn components
+    save-indicator.tsx  # save state context + indicator component
   lib/
-    convex.ts           # convex client setup
-    liveblocks.ts       # liveblocks client setup
-    clerk.ts            # clerk setup
+    chat.ts             # AI SDK useChat hook with Clerk auth + Convex persistence
+    workspace.tsx       # workspace context provider
+    liveblocks.tsx      # liveblocks client setup
+    hotkeys.tsx         # keyboard shortcut system
 convex/
   schema.ts             # database schema
   trips.ts              # trip queries and mutations
   pins.ts               # pin queries and mutations
   scratchpads.ts        # scratchpad queries and mutations
   ingestion.ts          # URL fetch + AI extraction actions
+  aiChat.ts             # HTTP streaming endpoint (AI SDK + Anthropic)
+  chat.ts               # chat thread/message persistence
+  chatTools.ts          # internal wrappers for agent tool calls
+  http.ts               # HTTP router for streaming endpoint
+  moodboardAssets.ts    # Convex file storage for tldraw images
   auth.config.ts        # Clerk integration
 ```
