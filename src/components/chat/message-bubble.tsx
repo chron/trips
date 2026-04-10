@@ -12,7 +12,7 @@ interface ToolUIPart {
 }
 
 function isToolPart(part: { type: string }): part is ToolUIPart {
-  return part.type.startsWith("tool-") && part.type !== "tool-invocation";
+  return part.type.startsWith("tool-");
 }
 
 export function MessageBubble({ message }: { message: UIMessage }) {
@@ -46,23 +46,6 @@ export function MessageBubble({ message }: { message: UIMessage }) {
                   args={part.input ?? {}}
                   result={part.output}
                   state={part.state}
-                />
-              </div>
-            );
-          }
-          if (part.type === "tool-invocation") {
-            // Legacy format from persisted messages
-            return (
-              <div key={i} className="my-1.5">
-                <ToolCallDisplay
-                  toolName={part.toolInvocation.toolName}
-                  args={part.toolInvocation.args as Record<string, unknown>}
-                  result={
-                    "result" in part.toolInvocation
-                      ? part.toolInvocation.result
-                      : undefined
-                  }
-                  state={part.toolInvocation.state}
                 />
               </div>
             );

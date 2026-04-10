@@ -56,15 +56,12 @@ function persistedToUIMessages(
     if (msg.toolCalls?.length) {
       for (const tc of msg.toolCalls) {
         parts.push({
-          type: "tool-invocation",
-          toolInvocation: {
-            toolCallId: tc.id,
-            toolName: tc.name,
-            args: JSON.parse(tc.args),
-            state: "result" as const,
-            result: tc.result ? JSON.parse(tc.result) : undefined,
-          },
-        });
+          type: `tool-${tc.name}` as `tool-${string}`,
+          toolCallId: tc.id,
+          state: "output-available" as const,
+          input: JSON.parse(tc.args),
+          output: tc.result ? JSON.parse(tc.result) : undefined,
+        } as UIMessage["parts"][number]);
       }
     }
 

@@ -45,7 +45,7 @@ export function ToolCallDisplay({
         {isLoading && (
           <span className="text-muted-foreground animate-pulse">Running...</span>
         )}
-        {!isLoading && result && (
+        {!isLoading && result !== undefined && (
           <span className="text-muted-foreground truncate">
             {formatBriefResult(result)}
           </span>
