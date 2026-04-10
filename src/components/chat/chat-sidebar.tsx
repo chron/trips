@@ -45,7 +45,7 @@ export function ChatSidebar({
             output.tripId !== lastNavRef.current
           ) {
             lastNavRef.current = output.tripId;
-            navigate({ to: "/trips/$tripId", params: { tripId: output.tripId } });
+            navigate({ to: "/trips/$tripId", params: { tripId: output.tripId }, search: { tab: "map" } });
           }
         }
       }
