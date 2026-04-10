@@ -13,7 +13,12 @@ Use bun for package management.
 - **AI chat:** Vercel AI SDK v6 (`ai` + `@ai-sdk/anthropic` + `@ai-sdk/react`) via Convex HTTP endpoint
 - **Toasts:** Sonner
 - **Linting:** oxlint + ESLint (`bun run lint`)
+- **Full check:** `bun run check` (typecheck + lint — matches CI)
 - **Deploy:** Cloudflare Pages
+
+## Workflow
+
+- Run `bun run check` before committing to catch type errors and lint issues locally (same as CI)
 
 ## Key patterns
 
