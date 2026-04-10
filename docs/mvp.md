@@ -2,100 +2,115 @@
 
 The first shippable cut. Goal: two people can sign in, manage a list of trip ideas, drop pins on a map, take freeform notes, paste URLs for AI extraction, and see each other's presence in real time.
 
-## Milestone 1: Project Scaffold & Auth
+## Milestone 1: Project Scaffold & Auth ✓
 
 **Goal:** App boots, deploys to Cloudflare Pages, users can sign in.
 
-- [ ] Init Vite + React + TypeScript project
-- [ ] Set up Tailwind CSS + shadcn/ui
-- [ ] Install and configure TanStack Router (file-based or code-based routes)
-- [ ] Set up Convex (`npx convex dev`)
-- [ ] Integrate Clerk auth with Convex (`@clerk/clerk-react` + Convex auth adapter)
-- [ ] Magic link sign-in flow
-- [ ] Basic layout shell (sidebar + main content area)
-- [ ] Deploy to Cloudflare Pages (Vite build → `dist/`)
-- [ ] Workspace creation on first sign-in (auto-create, invite partner by email)
+- [x] Init Vite + React + TypeScript project
+- [x] Set up Tailwind CSS + shadcn/ui
+- [x] Install and configure TanStack Router (code-based routes)
+- [x] Set up Convex (`npx convex dev`)
+- [x] Integrate Clerk auth with Convex (`@clerk/clerk-react` + Convex auth adapter)
+- [x] Magic link sign-in flow
+- [x] Basic layout shell (sidebar + main content area)
+- [x] Deploy to Cloudflare Pages (Vite build → `dist/`)
+- [x] Workspace creation on first sign-in (auto-create)
+- [ ] Invite partner by email (deferred)
 
 **Routes after this milestone:**
 - `/` → redirect to `/trips`
 - `/trips` → trip list (empty state)
 
-## Milestone 2: Trip List
+## Milestone 2: Trip List ✓
 
 **Goal:** Users can create, view, reorder, and manage trip ideas.
 
-- [ ] Convex schema: `trips` table (title, destination, status, sortOrder, workspaceId)
-- [ ] Trip list page with empty state
-- [ ] Create trip dialog (title + destination)
-- [ ] Trip cards showing title, destination, status badge
-- [ ] Drag-to-reorder (use `@dnd-kit/core` or similar)
-- [ ] Status transitions: draft → planning → booked (simple dropdown or button)
-- [ ] Delete trip (with confirmation)
+- [x] Convex schema: `trips` table (title, destination, status, sortOrder, workspaceId)
+- [x] Trip list page with empty state + loading skeleton
+- [x] Create trip dialog (title + destination) with toast
+- [x] Trip cards showing title, destination, status badge
+- [x] Drag-to-reorder (dnd-kit)
+- [x] Status transitions: draft → planning → booked (dropdown)
+- [x] Delete trip (with confirmation + toast)
 
 **Routes after this milestone:**
 - `/trips` → trip list
 - `/trips/:id` → trip detail (placeholder)
 
-## Milestone 3: Trip Map
+## Milestone 3: Trip Map ✓
 
 **Goal:** Each trip has a Mapbox map where users can drop and manage pins.
 
-- [ ] Convex schema: `pins` table (tripId, lat, lng, name, category, notes, sourceUrl, createdBy)
-- [ ] Mapbox GL JS integration on trip detail page
-- [ ] Click-to-place pin on map
-- [ ] Pin popup/panel: edit name, category (food/activity/hotel/landmark/transport/other), notes, source URL
-- [ ] Pin markers styled by category (icon + colour)
-- [ ] Pin list sidebar (click to fly-to on map)
-- [ ] Delete pin
-- [ ] Pins sync in real-time between users via Convex
+- [x] Convex schema: `pins` table (tripId, lat, lng, name, category, notes, sourceUrl, createdBy)
+- [x] Mapbox GL JS integration on trip detail page
+- [x] Click-to-place pin on map
+- [x] Pin popup/panel: edit name, category, notes, source URL
+- [ ] Pin markers styled by category (icon + colour) — deferred
+- [x] Pin list sidebar (click to fly-to on map)
+- [x] Delete pin
+- [x] Pins sync in real-time between users via Convex
+- [x] Auto-fit map bounds on first pin load
+- [x] Geocoder search (mapbox-gl-geocoder)
 
-## Milestone 4: Scratchpads
+## Milestone 4: Scratchpads ✓
 
 **Goal:** Freeform text areas for dumping ideas, per-trip and globally.
 
-- [ ] Choose and integrate a rich text editor (Tiptap recommended — good Liveblocks integration story)
-- [ ] Per-trip scratchpad tab/panel on trip detail page
-- [ ] Convex schema: scratchpad content stored per trip
-- [ ] Global scratchpad accessible from sidebar (always available, not tied to a trip)
-- [ ] Convex schema: global scratchpad per workspace
-- [ ] Real-time sync of text content via Convex
+- [x] Tiptap rich text editor with markdown toggle
+- [x] Per-trip scratchpad ("Notes" tab on trip detail)
+- [x] Convex schema: scratchpad content stored per trip
+- [x] Global scratchpad accessible from sidebar
+- [x] Convex schema: global scratchpad per workspace
+- [x] Debounced save to Convex with conflict-safe sync
+- [ ] Collaborative cursors via Liveblocks Yjs — deferred
 
-## Milestone 5: Real-Time Presence
+## Milestone 5: Real-Time Presence ✓
 
 **Goal:** See your partner's cursor and what they're looking at.
 
-- [ ] Integrate Liveblocks (`@liveblocks/react`) alongside Convex
-- [ ] Room-per-trip: when viewing a trip, join a Liveblocks room
-- [ ] Show collaborator cursors on the map surface
-- [ ] Show collaborator presence indicator (avatar + "viewing this trip" in sidebar)
-- [ ] Show collaborator cursor/selection in scratchpad (if using Tiptap + Liveblocks Yjs)
-- [ ] Presence on trip list page (who's online)
+- [x] Integrate Liveblocks (`@liveblocks/react`) alongside Convex
+- [x] Room-per-trip: when viewing a trip, join a Liveblocks room
+- [x] Show collaborator cursors on the page (cursor overlay)
+- [x] Show collaborator presence indicator (avatars in header)
+- [ ] Show collaborator cursor/selection in scratchpad (Liveblocks Yjs) — deferred
+- [ ] Presence on trip list page — deferred
 
-## Milestone 6: URL Ingestion
+## Milestone 6: URL Ingestion ✓
 
 **Goal:** Paste a URL, AI extracts location and info, creates a draft pin.
 
-- [ ] "Add from URL" button/input on trip detail page
-- [ ] Convex action: fetch URL content (server-side)
-- [ ] Convex action: send page content to Claude API with extraction prompt
-  - Extract: location name, coordinates (or city/country for geocoding), description, category
-  - Handle Instagram Reel URLs: extract from page metadata + any available content
-- [ ] Geocode extracted location if needed (Mapbox Geocoding API)
-- [ ] Create pin from extracted data, mark as "suggested" so user can review/confirm
-- [ ] Show extraction result in a confirmation dialog before creating pin
-- [ ] Handle failures gracefully (URL unreachable, no location found, etc.)
+- [x] "Add from URL" input on pins tab
+- [x] Convex action: fetch URL content via Jina Reader (server-side)
+- [x] Convex action: send content to Claude API with extraction prompt
+- [x] Geocode extracted location via Mapbox Geocoding API fallback
+- [x] Show editable confirmation card before creating pin
+- [x] Map flies to new pin after creation
+- [ ] Instagram Reel URLs — deferred
 
-## Milestone 7: Polish & Ship
+## Milestone 7: Polish & Ship ✓
 
 **Goal:** Make it feel good enough to use daily.
 
-- [ ] Loading states and skeletons
-- [ ] Error boundaries and toast notifications
-- [ ] Empty states with helpful CTAs
-- [ ] Responsive layout (usable on mobile, optimised for desktop)
-- [ ] Keyboard shortcuts (N for new trip, P for new pin, etc.)
-- [ ] Page titles and basic meta tags
-- [ ] Final deploy and smoke test with both users
+- [x] Loading states and skeletons
+- [x] Error boundary
+- [x] Toast notifications (Sonner)
+- [x] Empty states with helpful CTAs
+- [x] Responsive sidebar (hamburger toggle on mobile)
+- [x] Keyboard shortcuts with discoverable meta-key hints (⌘N)
+- [x] Page titles (dynamic per trip)
+- [x] Meta tags + OG image
+- [x] Code splitting (lazy-loaded tldraw)
+- [x] Linting (oxlint + ESLint)
+- [x] Landing page illustration
+- [x] Favicon
+- [ ] Final production deploy and smoke test with both users
+
+### Bonus: Mood Board (tldraw) ✓
+
+- [x] Per-trip freeform canvas using tldraw v4
+- [x] Snapshot persistence to Convex (debounced save)
+- [x] "Board" tab on trip detail page
+- [x] Lazy-loaded to keep bundle lean
 
 ---
 

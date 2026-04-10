@@ -21,7 +21,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['src/routes/**/*.tsx', 'src/lib/**/*.tsx'],
+    files: ['src/routes/**/*.tsx', 'src/lib/**/*.tsx', 'src/components/save-indicator.tsx'],
     rules: {
       'react-refresh/only-export-components': 'off',
     },

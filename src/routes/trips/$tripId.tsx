@@ -12,6 +12,7 @@ import { TripRoom, CursorTracker } from "../../components/presence/trip-room";
 import { PresenceAvatars } from "../../components/presence/presence-avatars";
 import { CursorOverlay } from "../../components/presence/cursor-overlay";
 import { UrlIngest } from "../../components/ingestion/url-ingest";
+import { SaveIndicatorProvider, SaveIndicator } from "../../components/save-indicator";
 
 const LazyMoodboardEditor = lazy(() =>
   import("../../components/moodboard/moodboard-editor").then((m) => ({
@@ -88,6 +89,7 @@ function TripDetail() {
   }
 
   return (
+    <SaveIndicatorProvider>
     <CursorTracker>
       <CursorOverlay />
       <div className="flex flex-col h-full">
@@ -102,6 +104,7 @@ function TripDetail() {
             <TabBar active={activeTab} onChange={setActiveTab} />
           </div>
           <div className="flex items-center gap-3">
+            <SaveIndicator />
             <PresenceAvatars />
             <StatusPicker
               status={trip.status}
@@ -169,6 +172,7 @@ function TripDetail() {
         </div>
       </div>
     </CursorTracker>
+    </SaveIndicatorProvider>
   );
 }
 

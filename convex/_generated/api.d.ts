@@ -9,6 +9,7 @@
  */
 
 import type * as ingestion from "../ingestion.js";
+import type * as moodboardAssets from "../moodboardAssets.js";
 import type * as moodboards from "../moodboards.js";
 import type * as pins from "../pins.js";
 import type * as scratchpads from "../scratchpads.js";
@@ -23,6 +24,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   ingestion: typeof ingestion;
+  moodboardAssets: typeof moodboardAssets;
   moodboards: typeof moodboards;
   pins: typeof pins;
   scratchpads: typeof scratchpads;

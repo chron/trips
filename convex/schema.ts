@@ -46,6 +46,14 @@ export default defineSchema({
     snapshot: v.string(),
   }).index("by_trip", ["tripId"]),
 
+  moodboardAssets: defineTable({
+    tripId: v.id("trips"),
+    assetId: v.string(), // tldraw asset ID
+    storageId: v.id("_storage"),
+  })
+    .index("by_trip", ["tripId"])
+    .index("by_asset", ["tripId", "assetId"]),
+
   workspaces: defineTable({
     name: v.string(),
   }),
