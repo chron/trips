@@ -87,5 +87,6 @@ export default defineSchema({
     role: v.union(v.literal("owner"), v.literal("member")),
   })
     .index("by_workspace", ["workspaceId"])
-    .index("by_user", ["userId"]),
+    .index("by_user", ["userId"])
+    .index("by_email", ["email"]),
 });

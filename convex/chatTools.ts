@@ -3,7 +3,7 @@
  * These are called from the HTTP streaming action via ctx.runMutation/ctx.runQuery.
  */
 import { v } from "convex/values";
-import { internalMutation, internalQuery, internalAction } from "./_generated/server";
+import { internalMutation, internalQuery } from "./_generated/server";
 
 // --- Trips ---
 

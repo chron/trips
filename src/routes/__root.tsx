@@ -14,7 +14,8 @@ import { HotkeyProvider } from "../lib/hotkeys";
 import { TripList } from "../components/trip-list/trip-list";
 import { ScratchpadEditor } from "../components/scratchpad/scratchpad-editor";
 import { ChatSidebar } from "../components/chat/chat-sidebar";
-import { MessageCircle } from "lucide-react";
+import { MembersDialog } from "../components/workspace/members-dialog";
+import { MessageCircle, Users } from "lucide-react";
 import type { Id } from "../../convex/_generated/dataModel";
 
 export const Route = createRootRoute({
@@ -93,6 +94,7 @@ function AppShell() {
   const [scratchpadOpen, setScratchpadOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [membersOpen, setMembersOpen] = useState(false);
 
   // Get active trip ID from route if on a trip page
   const tripMatch = useMatch({ from: "/trips/$tripId", shouldThrow: false });
@@ -142,7 +144,17 @@ function AppShell() {
           <h1 className="text-2xl font-serif text-foreground tracking-tight">
             Trips
           </h1>
-          <UserButton />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setMembersOpen(true)}
+              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              title="Workspace members"
+            >
+              <Users className="h-4 w-4" />
+            </button>
+            <UserButton />
+          </div>
         </div>
         <nav className="flex-1 p-4 overflow-y-auto" onClick={closeSidebar}>
           <TripList />
@@ -194,6 +206,9 @@ function AppShell() {
           <MessageCircle className="h-5 w-5" />
         </button>
       )}
+
+      {/* Members dialog */}
+      {membersOpen && <MembersDialog onClose={() => setMembersOpen(false)} />}
     </div>
   );
 }
